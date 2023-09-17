@@ -1,4 +1,4 @@
-package users
+package controllers
 
 import (
 	"database/sql"
@@ -9,9 +9,10 @@ import (
 )
 
 type User struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID        int    `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
 }
 
 // get all users
@@ -26,7 +27,7 @@ func GetUsers(db *sql.DB) http.HandlerFunc {
 		users := []User{}
 		for rows.Next() {
 			var u User
-			if err := rows.Scan(&u.ID, &u.Name, &u.Email); err != nil {
+			if err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email); err != nil {
 				log.Fatal(err)
 			}
 			users = append(users, u)
@@ -46,7 +47,7 @@ func GetUser(db *sql.DB) http.HandlerFunc {
 		id := vars["id"]
 
 		var u User
-		err := db.QueryRow("SELECT * FROM users WHERE id=$1", id).Scan(&u.ID, &u.Name, &u.Email)
+		err := db.QueryRow("SELECT * FROM users WHERE id=$1", id).Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
@@ -61,7 +62,7 @@ func CreateUser(db *sql.DB) http.HandlerFunc {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
 
-		err := db.QueryRow("INSERT INTO users(name, email) VALUES($1, $2) RETURNING id", u.Name, u.Email).Scan(&u.ID)
+		err := db.QueryRow("INSERT INTO users(name, email) VALUES($1, $2) RETURNING id", u.FirstName, u.LastName, u.Email).Scan(&u.ID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -69,6 +70,7 @@ func CreateUser(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// update a user
 func UpdateUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -77,7 +79,7 @@ func UpdateUser(db *sql.DB) http.HandlerFunc {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
 
-		err := db.QueryRow("UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id", u.Name, u.Email, id).Scan(&u.ID)
+		err := db.QueryRow("UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id", u.FirstName, u.LastName, u.Email, id).Scan(&u.ID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -91,7 +93,7 @@ func DeleteUser(db *sql.DB) http.HandlerFunc {
 		id := vars["id"]
 
 		var u User
-		err := db.QueryRow("Select * FROM users WHERE id=$1", id).Scan(&u.ID, &u.Name, &u.Email)
+		err := db.QueryRow("Select * FROM users WHERE id=$1", id).Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
@@ -107,4 +109,12 @@ func DeleteUser(db *sql.DB) http.HandlerFunc {
 		}
 
 	}
+}
+
+type UsersController interface {
+	GetUsers(db *sql.DB) http.HandlerFunc
+	GetUser(db *sql.DB) http.HandlerFunc
+	CreateUser(db *sql.DB) http.HandlerFunc
+	UpdateUser(db *sql.DB) http.HandlerFunc
+	DeleteUser(db *sql.DB) http.HandlerFunc
 }
