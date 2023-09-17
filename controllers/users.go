@@ -62,7 +62,7 @@ func CreateUser(db *sql.DB) http.HandlerFunc {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
 
-		err := db.QueryRow("INSERT INTO users(name, email) VALUES($1, $2) RETURNING id", u.FirstName, u.LastName, u.Email).Scan(&u.ID)
+		err := db.QueryRow("INSERT INTO users(first_name, last_name, email) VALUES($1, $2, $3) RETURNING id", u.FirstName, u.LastName, u.Email).Scan(&u.ID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -79,7 +79,7 @@ func UpdateUser(db *sql.DB) http.HandlerFunc {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
 
-		err := db.QueryRow("UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id", u.FirstName, u.LastName, u.Email, id).Scan(&u.ID)
+		err := db.QueryRow("UPDATE users SET first_name=$1, last_name=$2, email=$3 WHERE id=$4 RETURNING id", u.FirstName, u.LastName, u.Email, id).Scan(&u.ID)
 		if err != nil {
 			log.Fatal(err)
 		}

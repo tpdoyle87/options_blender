@@ -17,12 +17,29 @@ func main() {
 	}
 	defer db.Close()
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, first_name TEXT, last_name TEXT, email TEXT)`)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS options (id SERIAL PRIMARY KEY, strike FLOAT, expiry TEXT. opton_type TEXT, underlying TEXT, Credit FLOAT, debit FLOAT, active BOOLEAN, entered TEXT, closed_early BOOLEAN, final_credit FLOAT, notes TEXT, user_id INTEGER REFERENCES users(id))`)
+	_, err = db.Exec(
+		`CREATE TABLE IF NOT EXISTS users (
+					id SERIAL PRIMARY KEY,
+					first_name TEXT,
+					last_name TEXT,
+					email TEXT
+				);
+				
+				CREATE TABLE IF NOT EXISTS options (
+					id SERIAL PRIMARY KEY,
+					strike FLOAT,
+					expiry TEXT,
+					option_type TEXT,
+					underlying TEXT,
+					Credit FLOAT,
+					debit FLOAT,
+					active BOOLEAN,
+					entered TEXT,
+					closed_early BOOLEAN,
+					final_credit FLOAT,
+					notes TEXT,
+					user_id INTEGER REFERENCES users(id)
+				);`)
 	if err != nil {
 		log.Fatal(err)
 	}

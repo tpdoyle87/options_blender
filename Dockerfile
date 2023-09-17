@@ -14,7 +14,7 @@ RUN go get -d -v ./...
 RUN go build -o options .
 
 #EXPOSE the port
-EXPOSE 8000
+EXPOSE 8080
 
 # Run the executable
-CMD ["./api"]
+CMD ["./options"]
