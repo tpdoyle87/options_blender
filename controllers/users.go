@@ -110,11 +110,3 @@ func DeleteUser(db *sql.DB) http.HandlerFunc {
 
 	}
 }
-
-type UsersController interface {
-	GetUsers(db *sql.DB) http.HandlerFunc
-	GetUser(db *sql.DB) http.HandlerFunc
-	CreateUser(db *sql.DB) http.HandlerFunc
-	UpdateUser(db *sql.DB) http.HandlerFunc
-	DeleteUser(db *sql.DB) http.HandlerFunc
-}

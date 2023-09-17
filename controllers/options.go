@@ -77,7 +77,8 @@ func CreateOption(db *sql.DB) http.HandlerFunc {
 		}
 		defer r.Body.Close()
 
-		_, err := db.Exec("INSERT INTO options (strike, expiry, option_type, underlying, credit, debit, active, entered, closed_early, final_credit, notes, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 $12)", o.Strike, o.Expiry, o.OptionType, o.Underlying, o.Credit, o.Debit, o.Active, o.Entered, o.ClosedEarly, o.FinalCredit, o.Notes, o.UserID)
+		_, err := db.Exec("INSERT INTO options (strike, expiry, option_type, underlying, credit, debit, active, entered, closed_early, final_credit, notes, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)", o.Strike, o.Expiry, o.OptionType, o.Underlying, o.Credit, o.Debit, o.Active, o.Entered, o.ClosedEarly, o.FinalCredit, o.Notes, o.UserID)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -98,7 +99,7 @@ func UpdateOption(db *sql.DB) http.HandlerFunc {
 		}
 		defer r.Body.Close()
 
-		_, err := db.Exec("UPDATE options SET strike=$1, expiry=$2, option_type=$3, underlying=$4, credit=$5, debit=$6, active=$7, entered=$8, closed_early=$9, final_credit=$10, notes=$11 user_id=$12 WHERE id=$13", o.Strike, o.Expiry, o.OptionType, o.Underlying, o.Credit, o.Debit, o.Active, o.Entered, o.ClosedEarly, o.FinalCredit, o.Notes, o.UserID, id)
+		_, err := db.Exec("UPDATE options SET strike=$1, expiry=$2, option_type=$3, underlying=$4, credit=$5, debit=$6, active=$7, entered=$8, closed_early=$9, final_credit=$10, notes=$11, user_id=$12 WHERE id=$13", o.Strike, o.Expiry, o.OptionType, o.Underlying, o.Credit, o.Debit, o.Active, o.Entered, o.ClosedEarly, o.FinalCredit, o.Notes, o.UserID, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -118,12 +119,4 @@ func DeleteOption(db *sql.DB) http.HandlerFunc {
 			return
 		}
 	}
-}
-
-type OptionsController interface {
-	GetOptions(db *sql.DB) http.HandlerFunc
-	GetOption(db *sql.DB) http.HandlerFunc
-	CreateOption(db *sql.DB) http.HandlerFunc
-	UpdateOption(db *sql.DB) http.HandlerFunc
-	DeleteOption(db *sql.DB) http.HandlerFunc
 }

@@ -3,7 +3,6 @@ version: '3.9'
 services:
   options-app:
     container_name: options-app
-    image: boomdoink/options-app:1.0.1
     build: .
     environment:
       DATABASE_URL: "host=options_db user=postgres password=postgres dbname=postgres sslmode=disable"

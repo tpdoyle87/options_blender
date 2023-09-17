@@ -50,7 +50,7 @@ func main() {
 	router.HandleFunc("/users", controllers.CreateUser(db)).Methods("POST")
 	router.HandleFunc("/users/{id}", controllers.UpdateUser(db)).Methods("PUT")
 	router.HandleFunc("/users/{id}", controllers.DeleteUser(db)).Methods("DELETE")
-	router.HandleFunc("/options/", controllers.GetOptions(db)).Methods("GET")
+	router.HandleFunc("/options", controllers.GetOptions(db)).Methods("GET")
 	router.HandleFunc("/options/{id}", controllers.GetOption(db)).Methods("GET")
 	router.HandleFunc("/options", controllers.CreateOption(db)).Methods("POST")
 	router.HandleFunc("/options/{id}", controllers.UpdateOption(db)).Methods("PUT")
