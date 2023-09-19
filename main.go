@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"log"
@@ -45,6 +46,10 @@ func main() {
 	}
 
 	router := mux.NewRouter()
+	credentials := handlers.AllowCredentials()
+	methods := handlers.AllowedMethods([]string{"POST"})
+	ttl := handlers.MaxAge(3600)
+	origins := handlers.AllowedOrigins([]string{"www.example.com"})
 	router.HandleFunc("/users", controllers.GetUsers(db)).Methods("GET")
 	router.HandleFunc("/users/{id}", controllers.GetUser(db)).Methods("GET")
 	router.HandleFunc("/users", controllers.CreateUser(db)).Methods("POST")
@@ -56,13 +61,6 @@ func main() {
 	router.HandleFunc("/options/{id}", controllers.UpdateOption(db)).Methods("PUT")
 	router.HandleFunc("/options/{id}", controllers.DeleteOption(db)).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddleware(router)))
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(credentials, methods, origins)(router)))
 
-}
-
-func jsonContentTypeMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		next.ServeHTTP(w, r)
-	})
 }
